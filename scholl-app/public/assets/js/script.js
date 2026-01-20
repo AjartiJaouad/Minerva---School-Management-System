@@ -1,5 +1,3 @@
-/* ========= HERO PAGE JS ========= */
-
 // Parallax effect on scroll
 window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
