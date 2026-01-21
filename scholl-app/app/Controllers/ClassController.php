@@ -27,4 +27,14 @@ class ClassController
         }
         require_once dirname(__DIR__) . '/views/classes/create.php';
     }
+    public function delete()
+    {
+        if (isset($_GET['id'])) {
+            $id = $_GET['id'];
+            $classeModel = new Classe();
+            $classeModel->delete($id);
+        }
+        header('Location; /classes');
+        exit ;
+    }
 }
