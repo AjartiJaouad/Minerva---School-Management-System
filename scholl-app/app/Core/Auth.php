@@ -30,4 +30,23 @@ class Auth {
             exit;
         }
     }
+
+
+    public static function requireTeacher(){
+        self::requireLogin();
+        
+        if(self::getRole() !== 'teacher'){
+            header('Location: /student/dashboard');
+            exit;
+        }
+    }
+
+    public static function requireStudent(){
+        self::requireLogin();
+        
+        if(self::getRole() !== 'student'){
+            header('Location: /teacher/dashboard');
+            exit;
+        }
+    }
 }

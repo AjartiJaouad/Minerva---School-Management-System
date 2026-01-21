@@ -7,11 +7,10 @@ class User
 {
     private $db;
 
-    public function __construct()
-    {
-        $this->db = Database::getInstance()->getConnection();
+   public function __construct() {
+        $database = new Database();
+        $this->db = $database->connect();
     }
-
     public function findByEmail($email)
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email LIMIT 1");

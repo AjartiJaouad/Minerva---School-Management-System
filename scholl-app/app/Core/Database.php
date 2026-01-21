@@ -5,40 +5,24 @@ use PDO;
 use PDOException;
 
 class Database {
-    private static $instance = null;
-    
-    private $connection;
-
     private $host = 'localhost';
-    private $user = 'root';
-    private $pass = '';     
-    private $dbname = 'school_app'; 
+    private $db_name = 'school_app';  
+    private $username = 'root';
+    private $password = '';
+    private $conn;
 
-    private function __construct() {
+    public function connect() {
+        $this->conn = null;
+
         try {
-            $dsn = "mysql:host={$this->host};dbname={$this->dbname};charset=utf8mb4";
-            
-            $this->connection = new PDO($dsn, $this->user, $this->pass);
-            
-            // On veut que SQL nous crie dessus s'il y a une erreur (Exception)
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            
-        } catch (PDOException $e) {
-            die("Erreur de connexion a BDD : " . $e->getMessage());
+            $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->db_name . ';charset=utf8';
+            $this->conn = new PDO($dsn, $this->username, $this->password);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            echo 'Connection Error: ' . $e->getMessage();
         }
-    }
 
-    public static function getInstance() {
-        if (self::$instance === null) {
-            self::$instance = new Database();
-        }
-        return self::$instance;
+        return $this->conn;
     }
-
-    public function getConnection() {
-        return $this->connection;
-    }
-    
-    private function __clone() {}
 }
