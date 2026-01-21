@@ -30,4 +30,19 @@ class Auth {
             exit;
         }
     }
+    // les middleware
+    public static function requireTeacher(){
+        self::requireLogin();
+        if(self::getRole()!=='teatchr'){
+            header('Location: /student/dashboard.php');
+            exit;
+        }
+    }
+    public static function requireStudent(){
+        self::requireLogin();
+        if(self::getRole()!=='student'){
+            header('Location: /teatcher/dashboard.php');
+            exit;
+        }
+    }
 }
