@@ -53,12 +53,11 @@ class AuthController {
         }
         
         try {
-            // Determine table based on role
-            $table = ($role === 'teacher') ? 'teachers' : 'students';
+            $table = 'users';
             
-            $sql = "SELECT * FROM {$table} WHERE email = :email LIMIT 1";
+            $sql = "SELECT * FROM {$table} WHERE email = :email AND role = :role LIMIT 1";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute(['email' => $email]);
+            $stmt->execute(['email' => $email, 'role' => $role]);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
             
             // Verify user exists and password is correct
@@ -69,14 +68,10 @@ class AuthController {
                 $_SESSION['name'] = $user['name'];
                 $_SESSION['role'] = $role;
                 
-                // Handle remember me
+                // Handle remember me (cookie only; no DB column defined)
                 if (isset($_POST['remember'])) {
                     $token = bin2hex(random_bytes(32));
                     setcookie('remember_token', $token, time() + (86400 * 30), '/');
-                    
-                    $updateSql = "UPDATE {$table} SET remember_token = :token WHERE id = :id";
-                    $updateStmt = $this->db->prepare($updateSql);
-                    $updateStmt->execute(['token' => $token, 'id' => $user['id']]);
                 }
                 
                 $_SESSION['success'] = 'Connexion réussie!';
@@ -140,8 +135,7 @@ class AuthController {
         }
         
         try {
-            // Determine table based on role
-            $table = ($role === 'teacher') ? 'teachers' : 'students';
+            $table = 'users';
             
             // Check if email already exists
             $checkSql = "SELECT id FROM {$table} WHERE email = :email LIMIT 1";
@@ -158,14 +152,15 @@ class AuthController {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             
             // Insert new user
-            $insertSql = "INSERT INTO {$table} (name, email, password, created_at) 
-                         VALUES (:name, :email, :password, NOW())";
+            $insertSql = "INSERT INTO {$table} (name, email, password, role, created_at) 
+                         VALUES (:name, :email, :password, :role, NOW())";
             
             $insertStmt = $this->db->prepare($insertSql);
             $insertStmt->execute([
                 'name' => $name,
                 'email' => $email,
-                'password' => $hashedPassword
+                'password' => $hashedPassword,
+                'role' => $role
             ]);
             
             // Get the newly created user's ID

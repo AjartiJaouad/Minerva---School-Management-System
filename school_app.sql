@@ -12,20 +12,7 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
---
--- Base de données : `school_app`
---
-
--- --------------------------------------------------------
-
---
--- Structure de la table `attendance`
---
 
 CREATE TABLE `attendance` (
   `id` int(11) NOT NULL,
@@ -35,11 +22,7 @@ CREATE TABLE `attendance` (
   `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
 
---
--- Structure de la table `chat_messages`
---
 
 CREATE TABLE `chat_messages` (
   `id` int(11) NOT NULL,
@@ -49,11 +32,6 @@ CREATE TABLE `chat_messages` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Structure de la table `classes`
---
 
 CREATE TABLE `classes` (
   `id` int(11) NOT NULL,
@@ -62,11 +40,6 @@ CREATE TABLE `classes` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Structure de la table `class_students`
---
 
 CREATE TABLE `class_students` (
   `id` int(11) NOT NULL,
@@ -74,11 +47,7 @@ CREATE TABLE `class_students` (
   `student_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
 
---
--- Structure de la table `grades`
---
 
 CREATE TABLE `grades` (
   `id` int(11) NOT NULL,
@@ -88,11 +57,7 @@ CREATE TABLE `grades` (
   `graded_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
 
---
--- Structure de la table `submissions`
---
 
 CREATE TABLE `submissions` (
   `id` int(11) NOT NULL,
@@ -103,11 +68,6 @@ CREATE TABLE `submissions` (
   `submitted_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Structure de la table `users`
---
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
@@ -118,11 +78,7 @@ CREATE TABLE `users` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
 
---
--- Structure de la table `works`
---
 
 CREATE TABLE `works` (
   `id` int(11) NOT NULL,
@@ -133,11 +89,7 @@ CREATE TABLE `works` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
 
---
--- Structure de la table `work_assignments`
---
 
 CREATE TABLE `work_assignments` (
   `id` int(11) NOT NULL,
@@ -145,13 +97,6 @@ CREATE TABLE `work_assignments` (
   `student_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Index pour les tables déchargées
---
-
---
--- Index pour la table `attendance`
---
 ALTER TABLE `attendance`
   ADD PRIMARY KEY (`id`),
   ADD KEY `class_id` (`class_id`),

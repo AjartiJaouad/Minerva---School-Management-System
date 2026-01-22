@@ -16,8 +16,7 @@ class Classe
 
     public function __construct()
     {
-        $db = new Database();
-        $this->conn = $db->connect();
+        $this->conn = Database::getInstance()->getConnection();
     }
     // en recuprere tout les  classes avec le nom de l'enseignant
     public function getAll()
@@ -29,6 +28,49 @@ class Classe
 
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllByTeacher(int $teacherId): array
+    {
+        $query = "SELECT classes.*, users.name as teacher_name,
+                         COUNT(class_students.id) as student_count
+                  FROM " . $this->table . "
+                  LEFT JOIN users ON classes.teacher_id = users.id
+                  LEFT JOIN class_students ON class_students.class_id = classes.id
+                  WHERE classes.teacher_id = :teacher_id
+                  GROUP BY classes.id
+                  ORDER BY classes.created_at DESC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute(['teacher_id' => $teacherId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getById(int $id): ?array
+    {
+        $query = "SELECT classes.*, users.name as teacher_name 
+                  FROM " . $this->table . "
+                  LEFT JOIN users ON classes.teacher_id = users.id
+                  WHERE classes.id = :id
+                  LIMIT 1";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute(['id' => $id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function getByStudent(int $studentId): array
+    {
+        $query = "SELECT classes.*
+                  FROM classes
+                  INNER JOIN class_students ON class_students.class_id = classes.id
+                  WHERE class_students.student_id = :student_id
+                  ORDER BY classes.name ASC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute(['student_id' => $studentId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function create($name, $teacher_id)

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduConnect - Plateforme Éducative</title>
  
-        <link rel="stylesheet" href="../../public/assets/css/style.css">
+        <link rel="stylesheet" href="/assets/css/style.css">
    
     
 </head>
@@ -14,7 +14,7 @@
         <div class="hero-content">
             <h1>EduConnect<br>Platform</h1>
             <p>Une plateforme éducative moderne pour connecter enseignants et étudiants. Gérez vos classes, travaux, évaluations et communications en un seul endroit.</p>
-            <a href="auth/login.php" class="cta-button">Commencer</a>
+            <a href="/auth/login" class="cta-button">Commencer</a>
         </div>
         <div class="hero-visual">
             <div class="leaf leaf1"></div>

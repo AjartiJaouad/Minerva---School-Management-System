@@ -4,7 +4,7 @@ namespace App\Core;
 class Controller {
     protected function render($view, $data = []) {
         extract($data);
-        $viewFile = dirname(__DIR__) . "/Views/" . $view . ".php";
+        $viewFile = dirname(__DIR__) . "/views/" . $view . ".php";
 
         if (file_exists($viewFile)) {
             require_once $viewFile;

@@ -21,16 +21,20 @@ class Auth {
 
     public static function getUserName() {
         self::start();
-        return $_SESSION['name'] ?? 'Invité';
+        return $_SESSION['name'] ?? 'Invite';
+    }
+
+    public static function getUserId() {
+        self::start();
+        return $_SESSION['user_id'] ?? null;
     }
 
     public static function requireLogin() {
         if (!self::isLoggedIn()) {
-            header('Location: /login');
+            header('Location: /auth/login');
             exit;
         }
     }
-
 
     public static function requireTeacher(){
         self::requireLogin();
