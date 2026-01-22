@@ -32,4 +32,26 @@ class User {
             ':role' => $data['role']
         ]);
     }
+
+    // Récupérer tous les étudiants
+    public function getAllStudents() {
+        $sql = "SELECT * FROM users WHERE role = 'student' ORDER BY nom ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Récupérer les étudiants non affectés à une classe
+    public function getUnassignedStudents($class_id) {
+        $sql = "SELECT DISTINCT u.* FROM users u
+                WHERE u.role = 'student' 
+                AND u.id NOT IN (
+                    SELECT student_id FROM class_students WHERE class_id = :class_id
+                )
+                ORDER BY u.nom ASC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':class_id' => $class_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

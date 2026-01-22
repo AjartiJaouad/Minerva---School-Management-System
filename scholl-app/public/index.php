@@ -37,6 +37,10 @@ $router->get('/teacher/dashboard', 'AuthController', 'teacherDashboard');
 $router->get('/classes', 'ClassController', 'index');
 $router->get('/classes/create', 'ClassController', 'create');
 $router->post('/classes/store', 'ClassController', 'store');
+$router->get('/classes/show', 'ClassController', 'show');
+$router->get('/classes/assign-students', 'ClassController', 'assignStudents');
+$router->post('/classes/add-student', 'ClassController', 'addStudent');
+$router->post('/classes/remove-student', 'ClassController', 'removeStudent');
 
 $router->dispatch();
 ?>

@@ -68,6 +68,7 @@
                         <?= !empty($classe['teacher_name']) ? htmlspecialchars($classe['teacher_name']) : '<span style="color:gray">Non assigné</span>' ?>
                     </td>
                     <td>
+                        <a href="/classes/show?id=<?= $classe['id'] ?>" class="btn btn-details" style="background-color: #007bff; text-decoration: none; color: white; padding: 8px 15px; border-radius: 4px; margin-right: 5px;">Détails</a>
                         <a href="/classes/delete?id=<?= $classe['id'] ?>" class="btn btn-del" onclick="return confirm('Supprimer cette classe ?')">Supprimer</a>
                     </td>
                 </tr>

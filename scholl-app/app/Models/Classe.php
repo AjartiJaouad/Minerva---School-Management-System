@@ -17,7 +17,7 @@ class Classe
     public function __construct()
     {
         $db = new Database();
-        $this->conn = $db->connect();
+        $this->conn = $db->getConnection();
     }
     // en recuprere tout les  classes avec le nom de l'enseignant
     public function getAll()
@@ -48,14 +48,75 @@ class Classe
         }
         return false;
     }
-    public function delete($id) {
+    public function delete($id)
+    {
         $query = "DELETE FROM " . $this->table . " WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id);
-        
+
         if ($stmt->execute()) {
             return true;
         }
         return false;
+    }
+
+    // Récupérer une classe par ID
+    public function getById($id)
+    {
+        $query = "SELECT classes.*, users.name as teacher_name 
+                  FROM " . $this->table . "
+                  LEFT JOIN users ON classes.teacher_id = users.id
+                  WHERE classes.id = :id";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Récupérer tous les étudiants d'une classe
+    public function getStudents($class_id)
+    {
+        $query = "SELECT u.* FROM users u
+                  JOIN class_students cs ON u.id = cs.student_id
+                  WHERE cs.class_id = :class_id AND u.role = 'student'";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':class_id', $class_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Ajouter un étudiant à une classe
+    public function addStudent($class_id, $student_id)
+    {
+        // Vérifier si l'étudiant n'est pas déjà dans la classe
+        $query = "SELECT * FROM class_students WHERE class_id = :class_id AND student_id = :student_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':class_id', $class_id);
+        $stmt->bindParam(':student_id', $student_id);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            return false; // Étudiant déjà dans la classe
+        }
+
+        $query = "INSERT INTO class_students (class_id, student_id) VALUES (:class_id, :student_id)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':class_id', $class_id);
+        $stmt->bindParam(':student_id', $student_id);
+
+        return $stmt->execute();
+    }
+
+    // Supprimer un étudiant d'une classe
+    public function removeStudent($class_id, $student_id)
+    {
+        $query = "DELETE FROM class_students WHERE class_id = :class_id AND student_id = :student_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':class_id', $class_id);
+        $stmt->bindParam(':student_id', $student_id);
+
+        return $stmt->execute();
     }
 }
