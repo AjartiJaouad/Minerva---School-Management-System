@@ -8,7 +8,6 @@ class AuthController {
 
     // 1. Afficher le formulaire de connexion
     public function showLogin() {
-        // Vérifier si déjà connecté
         if (isset($_SESSION['user_id'])) {
             $this->redirectUser($_SESSION['role']);
         }
@@ -32,9 +31,8 @@ class AuthController {
                 // Création de la session
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['role'] = $user['role'];
-                $_SESSION['nom'] = $user['nom']; // السمية كاملة كاينة هنا
+                $_SESSION['nom'] = $user['nom']; 
                 
-              
                 $this->redirectUser($user['role']);
             } else {
                 $_SESSION['error'] = "Email ou mot de passe incorrect.";
@@ -44,7 +42,7 @@ class AuthController {
         }
     }
 
-    // 3. Traiter l'inscription (Register) - ✅ ضروري تكون هادي
+    // 3. Traiter l'inscription (Register)
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
@@ -54,16 +52,14 @@ class AuthController {
             $confirmPassword = $_POST['confirm_password'];
             $role = $_POST['role'];
 
-            // Validation
             if ($password !== $confirmPassword) {
                 $_SESSION['error'] = "Les mots de passe ne correspondent pas.";
-                header('Location: /login');
+                header('Location: /login'); 
                 exit;
             }
 
             $userModel = new User();
 
-            // Vérifier email
             if ($userModel->findByEmail($email)) {
                 $_SESSION['error'] = "Cet email est déjà utilisé.";
                 header('Location: /login');
@@ -79,7 +75,6 @@ class AuthController {
                 'role' => $role
             ];
 
-            // Create User
             if ($userModel->create($data)) {
                 $_SESSION['success'] = "Compte créé ! Connectez-vous.";
                 header('Location: /login');
@@ -92,7 +87,6 @@ class AuthController {
         }
     }
 
-    // 4. Déconnexion
     public function logout() {
         session_unset();
         session_destroy();
@@ -103,7 +97,14 @@ class AuthController {
     // --- Dashboards ---
 
     public function teacherDashboard() {
-        require_once dirname(__DIR__) . '/views/teatcher/dashboard.php';
+       
+        $viewPath = dirname(__DIR__) . '/views/teatcher/dashboard.php';
+        
+        if (file_exists($viewPath)) {
+            require_once $viewPath;
+        } else {
+            echo "Erreur : La vue dashboard.php n'existe pas dans views/teacher/";
+        }
     }
 
     public function studentDashboard() {
@@ -112,7 +113,7 @@ class AuthController {
 
     private function redirectUser($role) {
         if ($role === 'enseignant' || $role === 'teacher') {
-            header('Location: /teacher/dashboard');
+            header('Location: /teacher/dashboard'); 
         } else {
             header('Location: /student/dashboard');
         }
