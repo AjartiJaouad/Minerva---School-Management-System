@@ -32,7 +32,7 @@ $router->get('/logout', 'AuthController', 'logout');
 
 
 $router->get('/student/dashboard', 'AuthController', 'studentDashboard');
-$router->get('/teatcher/dashboard', 'AuthController', 'teacherDashboard');
+$router->get('/teacher/dashboard', 'AuthController', 'teacherDashboard');
 
 $router->get('/classes', 'ClassController', 'index');
 $router->get('/classes/create', 'ClassController', 'create');
