@@ -174,7 +174,7 @@
                     <?php foreach ($students as $student): ?>
                         <div class="student-item">
                             <div class="student-info">
-                                <h3><?= htmlspecialchars($student['nom']) ?></h3>
+                                <h3><?= htmlspecialchars($student['name']) ?></h3>
                                 <p><?= htmlspecialchars($student['email']) ?></p>
                             </div>
                             <form method="POST" action="/classes/remove-student" class="remove-form" 

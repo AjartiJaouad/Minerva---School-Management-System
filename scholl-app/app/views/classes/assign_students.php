@@ -155,7 +155,7 @@
                                     <input type="checkbox" id="student_<?= $student['id'] ?>" 
                                            name="student_ids[]" value="<?= $student['id'] ?>">
                                     <label for="student_<?= $student['id'] ?>">
-                                        <?= htmlspecialchars($student['nom']) ?>
+                                        <?= htmlspecialchars($student['name']) ?>
                                         <div class="email"><?= htmlspecialchars($student['email']) ?></div>
                                     </label>
                                 </div>

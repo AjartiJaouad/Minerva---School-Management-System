@@ -21,12 +21,12 @@ class User {
 
     public function create($data) {
       
-        $sql = "INSERT INTO users (nom, email, password, role) VALUES (:nom, :email, :password, :role)";
+        $sql = "INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)";
         
         $stmt = $this->db->prepare($sql);
         
         return $stmt->execute([
-            ':nom' => $data['name'], 
+            ':name' => $data['name'], 
             ':email' => $data['email'],
             ':password' => $data['password'],
             ':role' => $data['role']
@@ -35,7 +35,7 @@ class User {
 
     // Récupérer tous les étudiants
     public function getAllStudents() {
-        $sql = "SELECT * FROM users WHERE role = 'student' ORDER BY nom ASC";
+        $sql = "SELECT * FROM users WHERE role = 'student' ORDER BY name ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -48,7 +48,7 @@ class User {
                 AND u.id NOT IN (
                     SELECT student_id FROM class_students WHERE class_id = :class_id
                 )
-                ORDER BY u.nom ASC";
+                ORDER BY u.name ASC";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':class_id' => $class_id]);

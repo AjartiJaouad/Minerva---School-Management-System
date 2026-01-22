@@ -31,7 +31,7 @@ class AuthController {
                 // Création de la session
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['role'] = $user['role'];
-                $_SESSION['nom'] = $user['nom']; 
+                $_SESSION['nom'] = $user['name']; 
                 
                 $this->redirectUser($user['role']);
             } else {
