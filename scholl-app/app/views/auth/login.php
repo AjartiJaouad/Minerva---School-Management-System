@@ -1,91 +1,204 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - EduConnect</title>
-    
-    <link rel="stylesheet" href="/assets/css/style.css"> 
-    
-    <style>
-        body {
-            font-family: sans-serif;
-            background: linear-gradient(135deg, #2d5f5d 0%, #4a8e8b 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-        }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-        }
-        .auth-card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box; 
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 12px;
-            background: #2d5f5d;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .submit-btn:hover {
-            background: #1f4241;
-        }
-        .logo h1 { color: #2d5f5d; margin-bottom: 5px; }
-    </style>
+    <title>EduConnect - Authentification</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
+
 <body>
+    <div class="leaf-decoration leaf-1"></div>
+    <div class="leaf-decoration leaf-2"></div>
+    <div class="leaf-decoration leaf-3"></div>
 
     <div class="container">
         <div class="auth-card">
             <div class="logo">
                 <h1>EduConnect</h1>
-                <p>Bienvenue</p>
+                <p>Plateforme Éducative</p>
             </div>
 
-            <form action="/login" method="POST">
-                
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="exemple@gmail.com" required>
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="error-message">
+                    <?php
+                    echo htmlspecialchars($_SESSION['error']);
+                    unset($_SESSION['error']);
+                    ?>
                 </div>
+            <?php endif; ?>
 
-                <div class="form-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="success-message">
+                    <?php
+                    echo htmlspecialchars($_SESSION['success']);
+                    unset($_SESSION['success']);
+                    ?>
                 </div>
+            <?php endif; ?>
 
-                <button type="submit" class="submit-btn">Se connecter</button>
-            </form>
+            <div class="tab-container">
+                <button class="tab-btn active" onclick="switchTab('login')">Connexion</button>
+                <button class="tab-btn" onclick="switchTab('register')">Inscription</button>
+            </div>
 
-            <div style="margin-top: 15px; font-size: 14px;">
-                <p>Pas encore de compte ? <a href="/register" style="color: #2d5f5d;">S'inscrire</a></p>
+            <div id="login-form" class="form-content active">
+                <form action="/auth/login" method="POST">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📧</span>
+                            <input type="email" id="login-email" name="email" class="form-control"
+                                placeholder="votre.email@exemple.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">Mot de passe</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="login-password" name="password" class="form-control"
+                                placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div class="role-selector">
+                        <div class="role-option">
+                            <input type="radio" id="role-student" name="role" value="student" checked>
+                            <label for="role-student" class="role-label">
+                                <span class="role-icon">🎓</span>
+                                <span>Étudiant</span>
+                            </label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" id="role-teacher" name="role" value="teacher">
+                            <label for="role-teacher" class="role-label">
+                                <span class="role-icon">👨‍🏫</span>
+                                <span>Enseignant</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <label class="remember-me">
+                            <input type="checkbox" name="remember">
+                            <span>Se souvenir</span>
+                        </label>
+                        <a href="#" class="forgot-link">Mot de passe oublié?</a>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Se connecter</button>
+                </form>
+            </div>
+
+            <div id="register-form" class="form-content">
+                <form action="/auth/register" method="POST">
+                    <div class="form-group">
+                        <label for="register-name">Nom complet</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="register-name" name="name" class="form-control"
+                                placeholder="Prénom Nom" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📧</span>
+                            <input type="email" id="register-email" name="email" class="form-control"
+                                placeholder="votre.email@exemple.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-password">Mot de passe</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="register-password" name="password" class="form-control"
+                                placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-confirm">Confirmer mot de passe</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="register-confirm" name="confirm_password" class="form-control"
+                                placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div class="role-selector">
+                        <div class="role-option">
+                            <input type="radio" id="reg-role-student" name="role" value="student" checked>
+                            <label for="reg-role-student" class="role-label">
+                                <span class="role-icon">🎓</span>
+                                <span>Étudiant</span>
+                            </label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" id="reg-role-teacher" name="role" value="teacher">
+                            <label for="reg-role-teacher" class="role-label">
+                                <span class="role-icon">👨‍🏫</span>
+                                <span>Enseignant</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">S'inscrire</button>
+                </form>
+            </div>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <div class="back-home">
+                <a href="/">← Retour à l'accueil</a>
             </div>
         </div>
     </div>
 
+    <script>
+        function switchTab(tab) {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const formContents = document.querySelectorAll('.form-content');
+
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            formContents.forEach(form => form.classList.remove('active'));
+
+            if (tab === 'login') {
+                tabButtons[0].classList.add('active');
+                document.getElementById('login-form').classList.add('active');
+            } else if (tab === 'register') {
+                tabButtons[1].classList.add('active');
+                document.getElementById('register-form').classList.add('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerForm = document.querySelector('#register-form form');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    const password = document.getElementById('register-password').value;
+                    const confirmPassword = document.getElementById('register-confirm').value;
+
+                    if (password !== confirmPassword) {
+                        e.preventDefault();
+                        alert('Les mots de passe ne correspondent pas!');
+                        return false;
+                    }
+                    if (password.length < 6) {
+                        e.preventDefault();
+                        alert('Le mot de passe doit contenir au moins 6 caractères!');
+                        return false;
+                    }
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>

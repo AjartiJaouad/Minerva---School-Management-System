@@ -1,64 +1,117 @@
 <?php
 namespace App\Controllers;
 
-use App\Core\Controller;
 use App\Models\User;
 use App\Core\Auth;
 
-class AuthController extends Controller {
+class AuthController {
 
-    // 1. Afficher la page de Login
-    public function showLoginForm() {
-        // Si le gars est déjà connecté, on le vire vers son Dashboard direct
-        if (Auth::isLoggedIn()) {
-            $this->redirectUser();
+    // 1. Afficher le formulaire de connexion
+    public function showLogin() {
+        // Vérifier si déjà connecté
+        if (isset($_SESSION['user_id'])) {
+            $this->redirectUser($_SESSION['role']);
         }
-        
-        // Sinon, on affiche le formulaire HTML
-        $this->render('auth/login');
+        require_once dirname(__DIR__) . '/views/auth/login.php';
     }
 
-    // 2. Traiter le formulaire (POST)
+    // 2. Traiter la connexion (Login)
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
-            // Nettoyage basique des entrées
-            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-            $password = $_POST['password'] ?? '';
+            // Nettoyage des données
+            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+            $password = $_POST['password'];
 
-            // Appeler le Modèle pour chercher l'utilisateur
+            // Appel au Model
             $userModel = new User();
             $user = $userModel->findByEmail($email);
 
-            // --- VÉRIFICATION DU MOT DE PASSE (HASH) ---
+            // Vérification
             if ($user && password_verify($password, $user['password'])) {
-                
-                // C'est bon ! On démarre la session via ton Middleware
-                Auth::start();
+                // Création de la session
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['role'] = $user['role'];
+                $_SESSION['nom'] = $user['nom']; // السمية كاملة كاينة هنا
                 
-                $_SESSION['name'] = $user['name']; 
-
-                $this->redirectUser();
-
+              
+                $this->redirectUser($user['role']);
             } else {
-                $this->render('auth/login', ['error' => 'Email ou mot de passe incorrect']);
+                $_SESSION['error'] = "Email ou mot de passe incorrect.";
+                header('Location: /login');
+                exit;
             }
         }
     }
 
-    // Se déconnecter
+    // 3. Traiter l'inscription (Register) - ✅ ضروري تكون هادي
+    public function register() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            
+            $name = trim($_POST['name']);
+            $email = trim($_POST['email']);
+            $password = $_POST['password'];
+            $confirmPassword = $_POST['confirm_password'];
+            $role = $_POST['role'];
+
+            // Validation
+            if ($password !== $confirmPassword) {
+                $_SESSION['error'] = "Les mots de passe ne correspondent pas.";
+                header('Location: /login');
+                exit;
+            }
+
+            $userModel = new User();
+
+            // Vérifier email
+            if ($userModel->findByEmail($email)) {
+                $_SESSION['error'] = "Cet email est déjà utilisé.";
+                header('Location: /login');
+                exit;
+            }
+
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            $data = [
+                'name' => $name, 
+                'email' => $email,
+                'password' => $hashedPassword,
+                'role' => $role
+            ];
+
+            // Create User
+            if ($userModel->create($data)) {
+                $_SESSION['success'] = "Compte créé ! Connectez-vous.";
+                header('Location: /login');
+                exit;
+            } else {
+                $_SESSION['error'] = "Erreur lors de l'inscription.";
+                header('Location: /login');
+                exit;
+            }
+        }
+    }
+
+    // 4. Déconnexion
     public function logout() {
-        Auth::start();
-        session_destroy(); 
-        
+        session_unset();
+        session_destroy();
         header('Location: /login');
         exit;
     }
 
-    private function redirectUser() {
-        if ($_SESSION['role'] === 'teacher') {
+    // --- Dashboards ---
+
+    public function teacherDashboard() {
+        require_once dirname(__DIR__) . '/views/teatcher/dashboard.php';
+    }
+
+    public function studentDashboard() {
+        require_once dirname(__DIR__) . '/views/student/dashboard.php';
+    }
+
+    private function redirectUser($role) {
+        if ($role === 'enseignant' || $role === 'teacher') {
             header('Location: /teacher/dashboard');
         } else {
             header('Location: /student/dashboard');

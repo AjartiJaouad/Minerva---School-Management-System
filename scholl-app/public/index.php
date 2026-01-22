@@ -1,85 +1,42 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 session_start();
 
-require_once '../app/Core/Database.php';
-require_once '../app/Core/Controller.php';
-require_once '../app/Core/Auth.php';
-require_once '../app/Models/User.php';
-require_once '../app/Models/Classe.php'; 
-require_once '../app/Controllers/AuthController.php';
-require_once '../app/Controllers/ClassController.php'; 
-use App\Controllers\AuthController;
-use App\Core\Auth;
-use App\Controllers\ClassController;
 
-$uri = $_SERVER['REQUEST_URI'];
-$method = $_SERVER['REQUEST_METHOD'];
-
-// Nettoyage de l'URI pour marcher sur localhost/dossier...
-$scriptName = dirname($_SERVER['SCRIPT_NAME']);
-$uri = str_replace($scriptName, '', $uri);
-
-$uri = explode('?', $uri)[0];
-
-if ($uri === '') $uri = '/';
-
-switch ($uri) {
+spl_autoload_register(function ($class) {
+    $class = str_replace('App\\', '', $class);
+    $class = str_replace('\\', '/', $class);
+    $file = __DIR__ . '/../app/' . $class . '.php';
     
-    case '/':
-    case '/login':
-        $controller = new AuthController();
-        if ($method === 'POST') {
-            $controller->login();
-        } else {
-            $controller->showLoginForm();
-        }
-        break;
+    if (file_exists($file)) {
+        require_once $file;
+    }
+});
 
-    case '/logout':
-        $controller = new AuthController();
-        $controller->logout();
-        break;
+use App\Core\Router;
 
-    
-    case '/teacher/dashboard':
-        Auth::requireTeacher(); 
-        echo "<h1>👋 Bienvenue Cher Professeur</h1>";
-        echo "<p>Ceci est votre espace privé.</p>";
-        // Hna zedt lien bch ymchi l les classes dylou
-        echo "<a href='/classes' style='background:blue; color:white; padding:10px; text-decoration:none;'>🏫 Gérer mes classes</a><br><br>";
-        echo "<a href='/logout'>Se déconnecter</a>";
-        break;
+$router = new Router();
 
-    case '/student/dashboard':
-        Auth::requireStudent();
-        echo "<h1>👋 Salut Étudiant</h1>";
-        echo "<p>Ceci est ton espace de cours.</p>";
-        echo "<a href='/logout'>Se déconnecter</a>";
-        break;
 
-   
-    case '/classes':
-        Auth::requireTeacher(); // Hmaya: ghir l prof li ydkhl
-        $controller = new ClassController();
-        $controller->index();
-        break;
 
-    case '/classes/create':
-        Auth::requireTeacher();
-        $controller = new ClassController();
-        $controller->create();
-        break;
+$router->get('/', 'AuthController', 'showLogin');
+$router->get('/home', 'AuthController', 'showLogin'); 
+$router->get('/login', 'AuthController', 'showLogin'); 
 
-    case '/classes/delete':
-        Auth::requireTeacher();
-        $controller = new ClassController();
-        $controller->delete();
-        break;
+$router->get('/auth/login', 'AuthController', 'showLogin'); 
+$router->post('/auth/login', 'AuthController', 'login');
+$router->post('/auth/register', 'AuthController', 'register');
+$router->get('/logout', 'AuthController', 'logout'); 
 
-  
-    default:
-        http_response_code(404);
-        echo "<h1>404 - Page introuvable</h1>";
-        break;
-}
+
+$router->get('/student/dashboard', 'AuthController', 'studentDashboard');
+$router->get('/teatcher/dashboard', 'AuthController', 'teacherDashboard');
+
+$router->get('/classes', 'ClassController', 'index');
+$router->get('/classes/create', 'ClassController', 'create');
+$router->post('/classes/store', 'ClassController', 'store');
+
+$router->dispatch();
+?>

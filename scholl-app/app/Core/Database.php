@@ -5,22 +5,24 @@ use PDO;
 use PDOException;
 
 class Database {
-    private $host = 'localhost';
-    private $db_name = 'school_app';  
-    private $username = 'root';
-    private $password = '';
-    private $conn;
+    public $conn;
 
-    public function connect() {
+    public function getConnection() {
         $this->conn = null;
 
+        
+        $config = require __DIR__ . '/../../config/db.php';
+
         try {
-            $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->db_name . ';charset=utf8';
-            $this->conn = new PDO($dsn, $this->username, $this->password);
+            $dsn = "mysql:host=" . $config['host'] . ";dbname=" . $config['dbname'] . ";charset=utf8";
+            
+            $this->conn = new PDO($dsn, $config['username'], $config['password']);
+            
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
         } catch(PDOException $e) {
-            echo 'Connection Error: ' . $e->getMessage();
+            die("Erreur de connexion : " . $e->getMessage());
         }
 
         return $this->conn;
