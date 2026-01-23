@@ -42,5 +42,9 @@ $router->get('/classes/assign-students', 'ClassController', 'assignStudents');
 $router->post('/classes/add-student', 'ClassController', 'addStudent');
 $router->post('/classes/remove-student', 'ClassController', 'removeStudent');
 
+$router->get('/submissions/my-works', 'SubmissionController', 'myWorks');
+$router->get('/submissions/show', 'SubmissionController', 'show');
+$router->post('/submissions/submit', 'SubmissionController', 'submit');
+
 $router->dispatch();
 ?>

@@ -35,7 +35,8 @@ class Auth {
     public static function requireTeacher(){
         self::requireLogin();
         
-        if(self::getRole() !== 'teacher'){
+        $role = self::getRole();
+        if($role !== 'teacher' && $role !== 'enseignant'){
             header('Location: /student/dashboard');
             exit;
         }
