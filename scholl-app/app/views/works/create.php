@@ -11,6 +11,7 @@
         <header class="page-header">
             <h1>Creer un travail</h1>
             <a class="btn btn-secondary" href="/works">Retour</a>
+                    <a class="btn btn-secondary" href="/teacher/dashboard">Dashboard</a>
         </header>
 
         <form class="form-card" action="/works/store" method="POST" enctype="multipart/form-data">

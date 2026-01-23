@@ -11,7 +11,7 @@
         <header class="page-header">
             <h1>Assigner un travail</h1>
             <p><?= htmlspecialchars($work['title'] ?? '') ?> - <?= htmlspecialchars($work['class_name'] ?? '') ?></p>
-            <a class="btn btn-secondary" href="/works">Retour</a>
+            <a class="btn btn-secondary" href="/teacher/dashboard">Dashboard</a>
         </header>
 
         <?php if (!empty($students)): ?>

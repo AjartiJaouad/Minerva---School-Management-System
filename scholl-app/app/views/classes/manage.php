@@ -13,6 +13,7 @@
             <p><?= htmlspecialchars($class['name'] ?? 'Classe') ?></p>
             <a class="btn btn-secondary" href="/classes">Retour</a>
             <a class="btn btn-primary" href="/attendance?class_id=<?= (int) $class['id'] ?>">Presence</a>
+                    <a class="btn btn-secondary" href="/teacher/dashboard">Dashboard</a>
         </header>
 
         <section class="form-card">

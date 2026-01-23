@@ -12,6 +12,7 @@
             <h1>Presence</h1>
             <p><?= htmlspecialchars($class['name'] ?? '') ?></p>
             <a class="btn btn-secondary" href="/classes/manage?id=<?= (int) $class['id'] ?>">Retour</a>
+                    <a class="btn btn-secondary" href="/teacher/dashboard">Dashboard</a>
         </header>
 
         <form class="form-card" action="/attendance/save" method="POST">

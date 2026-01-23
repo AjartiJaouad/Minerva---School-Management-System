@@ -15,23 +15,43 @@ class WorkAssignment
 
     public function assignMany(int $workId, array $studentIds): void
     {
-        $stmt = $this->conn->prepare(
-            "INSERT INTO work_assignments (work_id, student_id)
-             VALUES (:work_id, :student_id)"
-        );
-
+        $normalized = [];
         foreach ($studentIds as $studentId) {
             $studentId = (int) $studentId;
-            if ($studentId <= 0) {
-                continue;
+            if ($studentId > 0) {
+                $normalized[] = $studentId;
             }
-            if ($this->isAssigned($workId, $studentId)) {
-                continue;
+        }
+        $normalized = array_values(array_unique($normalized));
+
+        $this->conn->beginTransaction();
+        try {
+            $stmt = $this->conn->prepare(
+                "DELETE FROM work_assignments WHERE work_id = :work_id"
+            );
+            $stmt->execute(['work_id' => $workId]);
+
+            if (empty($normalized)) {
+                $this->conn->commit();
+                return;
             }
-            $stmt->execute([
-                'work_id' => $workId,
-                'student_id' => $studentId
-            ]);
+
+            $stmt = $this->conn->prepare(
+                "INSERT INTO work_assignments (work_id, student_id)
+                 VALUES (:work_id, :student_id)"
+            );
+
+            foreach ($normalized as $studentId) {
+                $stmt->execute([
+                    'work_id' => $workId,
+                    'student_id' => $studentId
+                ]);
+            }
+
+            $this->conn->commit();
+        } catch (\Throwable $e) {
+            $this->conn->rollBack();
+            throw $e;
         }
     }
 
@@ -70,10 +90,13 @@ class WorkAssignment
              INNER JOIN classes ON classes.id = works.class_id
              LEFT JOIN submissions ON submissions.work_id = works.id
                                   AND submissions.student_id = :student_id
-             WHERE work_assignments.student_id = :student_id
+             WHERE work_assignments.student_id = :student_id_filter
              ORDER BY works.created_at DESC"
         );
-        $stmt->execute(['student_id' => $studentId]);
+        $stmt->execute([
+            'student_id' => $studentId,
+            'student_id_filter' => $studentId
+        ]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

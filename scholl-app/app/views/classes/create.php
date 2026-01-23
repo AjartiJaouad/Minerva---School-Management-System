@@ -11,6 +11,7 @@
         <header class="page-header">
             <h1>Creer une classe</h1>
             <p>Ajoutez une nouvelle classe a votre compte.</p>
+                    <a class="btn btn-secondary" href="/teacher/dashboard">Dashboard</a>
         </header>
 
         <form action="/classes/store" method="POST" class="form-card">

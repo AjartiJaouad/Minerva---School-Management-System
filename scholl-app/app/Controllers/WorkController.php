@@ -109,6 +109,9 @@ class WorkController
 
         $workId = (int) ($_POST['work_id'] ?? 0);
         $studentIds = $_POST['student_ids'] ?? [];
+        if (!is_array($studentIds) && $studentIds !== null && $studentIds !== '') {
+            $studentIds = [$studentIds];
+        }
         if ($workId <= 0 || !is_array($studentIds)) {
             header('Location: /works');
             exit;

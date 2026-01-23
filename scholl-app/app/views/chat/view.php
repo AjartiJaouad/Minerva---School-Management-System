@@ -11,6 +11,7 @@
         <header class="page-header">
             <h1>Chat - <?= htmlspecialchars($class['name'] ?? '') ?></h1>
             <a class="btn btn-secondary" href="/chat">Retour</a>
+            <a class="btn btn-secondary" href="<?= htmlspecialchars($dashboardUrl) ?>">Dashboard</a>
         </header>
 
         <div class="form-card">

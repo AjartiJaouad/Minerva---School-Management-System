@@ -47,7 +47,7 @@ class ClassStudent
         $stmt = $this->conn->prepare(
             "SELECT users.id, users.name, users.email
              FROM class_students
-             INNER jOIN users ON users.id = class_students.student_id
+             INNER JOIN users ON users.id = class_students.student_id
              WHERE class_students.class_id = :class_id
              ORDER BY users.name ASC"
         );

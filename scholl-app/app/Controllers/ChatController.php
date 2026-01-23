@@ -12,6 +12,7 @@ class ChatController
     {
         Auth::requireLogin();
         $classeModel = new Classe();
+        $dashboardUrl = Auth::getRole() === 'teacher' ? '/teacher/dashboard' : '/student/dashboard';
 
         if (Auth::getRole() === 'teacher') {
             $classes = $classeModel->getAllByTeacher((int) Auth::getUserId());
@@ -41,6 +42,7 @@ class ChatController
 
         $classeModel = new Classe();
         $class = $classeModel->getById($classId);
+        $dashboardUrl = Auth::getRole() === 'teacher' ? '/teacher/dashboard' : '/student/dashboard';
 
         require_once dirname(__DIR__) . '/views/chat/view.php';
     }

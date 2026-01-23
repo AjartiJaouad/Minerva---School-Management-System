@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -27,11 +27,11 @@ $studentEmail = htmlspecialchars($_SESSION['email'] ?? 'etudiant@edu.com');
                 <span class="nav-icon"><i class="fa-solid fa-school"></i></span>
                 <span class="nav-text">Ma Classe</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="/student/works" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-book-open"></i></span>
                 <span class="nav-text">Mes Travaux</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="/student/grades" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
                 <span class="nav-text">Mes Notes</span>
             </a>
@@ -39,7 +39,7 @@ $studentEmail = htmlspecialchars($_SESSION['email'] ?? 'etudiant@edu.com');
                 <span class="nav-icon"><i class="fa-solid fa-user-check"></i></span>
                 <span class="nav-text">Presence</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="/chat" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-comments"></i></span>
                 <span class="nav-text">Chat</span>
                 <span class="badge">3</span>
@@ -85,8 +85,8 @@ $studentEmail = htmlspecialchars($_SESSION['email'] ?? 'etudiant@edu.com');
                     <div class="stat-icon"><i class="fa-solid fa-book-open"></i></div>
                     <div class="stat-info">
                         <h3>Travaux</h3>
-                        <p class="stat-number">5</p>
-                        <p class="stat-change neutral">A rendre</p>
+                        <p class="stat-number"><?= (int) $workCount ?></p>
+                        <p class="stat-change neutral"><?= (int) $pendingWorkCount ?> a rendre</p>
                     </div>
                 </div>
 
@@ -94,7 +94,7 @@ $studentEmail = htmlspecialchars($_SESSION['email'] ?? 'etudiant@edu.com');
                     <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
                     <div class="stat-info">
                         <h3>Moyenne</h3>
-                        <p class="stat-number">14.5</p>
+                        <p class="stat-number"><?= $averageGrade !== null ? $averageGrade : '-' ?></p>
                         <p class="stat-change positive">+0.8 ce mois</p>
                     </div>
                 </div>
@@ -125,14 +125,11 @@ $studentEmail = htmlspecialchars($_SESSION['email'] ?? 'etudiant@edu.com');
                 Actions rapides
             </h2>
             <div class="actions-grid">
-                <button class="action-btn action-primary">
+                <button class="action-btn action-primary" type="button" onclick="window.location.href=\"/student/works\"">
                     <span class="action-icon"><i class="fa-solid fa-upload"></i></span>
                     <span>Soumettre un travail</span>
                 </button>
-                <button class="action-btn action-secondary">
-                    <span class="action-icon"><i class="fa-solid fa-star"></i></span>
-                    <span>Voir mes notes</span>
-                </button>
+                <button class="action-btn action-secondary" type="button" onclick="window.location.href=\"/student/grades\""><span class="action-icon"><i class="fa-solid fa-star"></i></span><span>Voir mes notes</span></button>
                 <button class="action-btn action-secondary">
                     <span class="action-icon"><i class="fa-solid fa-school"></i></span>
                     <span>Voir ma classe</span>
@@ -151,174 +148,67 @@ $studentEmail = htmlspecialchars($_SESSION['email'] ?? 'etudiant@edu.com');
                         <span><i class="fa-solid fa-book"></i></span>
                         Mes travaux
                     </h2>
-                    <a href="#" class="card-link">Voir tout ?</a>
+                    <a href="/student/works" class="card-link">Voir tout ?</a>
                 </div>
                 <div class="work-list">
-                    <div class="work-item">
-                        <div class="work-priority priority-high"><i class="fa-solid fa-circle"></i></div>
-                        <div class="work-details">
-                            <h3>Dissertation Histoire</h3>
-                            <p class="work-meta">
-                                <span><i class="fa-solid fa-calendar"></i> Echeance: 25 Jan 2026</span>
-                                <span><i class="fa-solid fa-hourglass"></i> A faire</span>
-                            </p>
-                        </div>
-                        <div class="work-status">
-                            <span class="status-badge status-pending">A rendre</span>
-                        </div>
-                    </div>
-
-                    <div class="work-item">
-                        <div class="work-priority priority-medium"><i class="fa-solid fa-circle"></i></div>
-                        <div class="work-details">
-                            <h3>Exercices Mathematiques</h3>
-                            <p class="work-meta">
-                                <span><i class="fa-solid fa-calendar"></i> Echeance: 28 Jan 2026</span>
-                                <span><i class="fa-solid fa-check"></i> Rendu</span>
-                            </p>
-                        </div>
-                        <div class="work-status">
-                            <span class="status-badge status-complete">Rendu</span>
-                        </div>
-                    </div>
-
-                    <div class="work-item">
-                        <div class="work-priority priority-low"><i class="fa-solid fa-circle"></i></div>
-                        <div class="work-details">
-                            <h3>Lecture Chapitre 5</h3>
-                            <p class="work-meta">
-                                <span><i class="fa-solid fa-calendar"></i> Echeance: 30 Jan 2026</span>
-                                <span><i class="fa-solid fa-hourglass"></i> A faire</span>
-                            </p>
-                        </div>
-                        <div class="work-status">
-                            <span class="status-badge status-pending">A rendre</span>
-                        </div>
-                    </div>
+                    <?php if (!empty($recentWorks)): ?>
+                        <?php foreach ($recentWorks as $work): ?>
+                            <?php $statusLabel = $work['status'] === 'submitted' ? 'Rendu' : 'A rendre'; ?>
+                            <div class="work-item">
+                                <div class="work-priority priority-medium"><i class="fa-solid fa-circle"></i></div>
+                                <div class="work-details">
+                                    <h3><?= htmlspecialchars($work['title']) ?></h3>
+                                    <p class="work-meta">
+                                        <span><i class="fa-solid fa-school"></i> <?= htmlspecialchars($work['class_name']) ?></span>
+                                        <span><i class="fa-solid fa-hourglass"></i> <?= $statusLabel ?></span>
+                                    </p>
+                                </div>
+                                <div class="work-status">
+                                    <div class="work-actions">
+                                        <?php if ($work['status'] === 'submitted'): ?>
+                                            <a class="status-badge status-complete work-action" href="/student/works/submit?id=<?= (int) $work['id'] ?>">Voir</a>
+                                        <?php else: ?>
+                                            <a class="status-badge status-pending work-action" href="/student/works/submit?id=<?= (int) $work['id'] ?>">Soumettre</a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="welcome-text">Aucun travail assigne.</p>
+                    <?php endif; ?>
                 </div>
             </section>
 
             <section class="content-card">
                 <div class="card-header">
                     <h2 class="card-title">
-                        <span><i class="fa-solid fa-school"></i></span>
-                        Ma classe
+                        <span><i class="fa-solid fa-star"></i></span>
+                        Mes notes
                     </h2>
-                    <a href="#" class="card-link">Details ?</a>
-                </div>
-                <div class="class-list">
-                    <div class="class-item">
-                        <div class="class-icon class-icon-1">2B</div>
-                        <div class="class-info">
-                            <h3>2nde B - Francais</h3>
-                            <p>Enseignant: M. Dupont • 25 etudiants</p>
-                        </div>
-                        <button class="class-action-btn">?</button>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="content-grid">
-            <section class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <span><i class="fa-solid fa-calendar-days"></i></span>
-                        Calendrier
-                    </h2>
-                </div>
-                <div class="calendar">
-                    <div class="calendar-header">
-                        <button class="calendar-nav"><i class="fa-solid fa-chevron-left"></i></button>
-                        <h3>Janvier 2026</h3>
-                        <button class="calendar-nav"><i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
-                    <div class="calendar-grid">
-                        <div class="calendar-day disabled">29</div>
-                        <div class="calendar-day disabled">30</div>
-                        <div class="calendar-day disabled">31</div>
-                        <div class="calendar-day">1</div>
-                        <div class="calendar-day">2</div>
-                        <div class="calendar-day">3</div>
-                        <div class="calendar-day">4</div>
-                        <div class="calendar-day">5</div>
-                        <div class="calendar-day">6</div>
-                        <div class="calendar-day">7</div>
-                        <div class="calendar-day">8</div>
-                        <div class="calendar-day">9</div>
-                        <div class="calendar-day">10</div>
-                        <div class="calendar-day">11</div>
-                        <div class="calendar-day">12</div>
-                        <div class="calendar-day">13</div>
-                        <div class="calendar-day">14</div>
-                        <div class="calendar-day">15</div>
-                        <div class="calendar-day">16</div>
-                        <div class="calendar-day">17</div>
-                        <div class="calendar-day">18</div>
-                        <div class="calendar-day">19</div>
-                        <div class="calendar-day today">20</div>
-                        <div class="calendar-day has-event">21</div>
-                        <div class="calendar-day">22</div>
-                        <div class="calendar-day">23</div>
-                        <div class="calendar-day has-event">24</div>
-                        <div class="calendar-day has-event">25</div>
-                        <div class="calendar-day">26</div>
-                        <div class="calendar-day">27</div>
-                        <div class="calendar-day">28</div>
-                        <div class="calendar-day">29</div>
-                        <div class="calendar-day">30</div>
-                        <div class="calendar-day">31</div>
-                    </div>
-                    <div class="calendar-events">
-                        <div class="event-item">
-                            <span class="event-dot event-high"></span>
-                            <span>25 Jan - Devoir Histoire</span>
-                        </div>
-                        <div class="event-item">
-                            <span class="event-dot event-medium"></span>
-                            <span>28 Jan - Controle Maths</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <span><i class="fa-solid fa-list-check"></i></span>
-                        Activite recente
-                    </h2>
+                    <a href="/student/grades" class="card-link">Voir tout ?</a>
                 </div>
                 <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-icon activity-submit"><i class="fa-solid fa-file-arrow-up"></i></div>
-                        <div class="activity-details">
-                            <p>Vous avez rendu <strong>Exercices Maths</strong></p>
-                            <p class="activity-time">Il y a 20 minutes</p>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-icon activity-grade"><i class="fa-solid fa-star"></i></div>
-                        <div class="activity-details">
-                            <p>Nouvelle note en <strong>Histoire</strong></p>
-                            <p class="activity-time">Il y a 2 heures</p>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-icon activity-class"><i class="fa-solid fa-user-plus"></i></div>
-                        <div class="activity-details">
-                            <p>Nouveau message du professeur</p>
-                            <p class="activity-time">Hier a 18:30</p>
-                        </div>
-                    </div>
+                    <?php if (!empty($recentGrades)): ?>
+                        <?php foreach ($recentGrades as $grade): ?>
+                            <div class="activity-item">
+                                <div class="activity-icon activity-grade"><i class="fa-solid fa-star"></i></div>
+                                <div class="activity-details">
+                                    <p><strong><?= htmlspecialchars($grade['title']) ?></strong></p>
+                                    <p class="activity-time"><?= $grade['grade'] !== null ? htmlspecialchars($grade['grade']) . '/20' : 'En attente' ?></p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="welcome-text">Aucune note disponible.</p>
+                    <?php endif; ?>
                 </div>
             </section>
         </div>
     </main>
 </body>
 </html>
+
 
 
 

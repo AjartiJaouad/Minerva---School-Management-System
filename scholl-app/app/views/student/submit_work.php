@@ -12,6 +12,7 @@
             <h1>Soumettre un travail</h1>
             <p><?= htmlspecialchars($work['title'] ?? '') ?></p>
             <a class="btn btn-secondary" href="/student/works">Retour</a>
+                    <a class="btn btn-secondary" href="/student/dashboard">Dashboard</a>
         </header>
 
         <form class="form-card" action="/student/works/submit" method="POST" enctype="multipart/form-data">

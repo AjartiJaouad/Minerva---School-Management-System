@@ -11,6 +11,7 @@
         <header class="page-header">
             <h1>Travaux</h1>
             <a class="btn btn-primary" href="/works/create">Creer un travail</a>
+                    <a class="btn btn-secondary" href="/teacher/dashboard">Dashboard</a>
         </header>
 
         <div class="form-card">
@@ -33,8 +34,10 @@
                                 <td><?= (int) $work['assigned_count'] ?></td>
                                 <td><?= (int) $work['submitted_count'] ?></td>
                                 <td>
-                                    <a class="btn btn-secondary" href="/works/assign?id=<?= (int) $work['id'] ?>">Assigner</a>
-                                    <a class="btn btn-primary" href="/grades/work?id=<?= (int) $work['id'] ?>">Noter</a>
+                                    <div class="table-actions">
+                                        <a class="btn btn-secondary" href="/works/assign?id=<?= (int) $work['id'] ?>">Assigner</a>
+                                        <a class="btn btn-primary" href="/grades/work?id=<?= (int) $work['id'] ?>">Noter</a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
