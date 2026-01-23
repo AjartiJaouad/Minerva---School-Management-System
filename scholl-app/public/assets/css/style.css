@@ -1181,6 +1181,42 @@ body::after {
     margin-bottom: 30px;
 }
 
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.table th {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.table-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.table-actions .btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+}
+
 
 /* Form Sections */
 
@@ -2029,6 +2065,16 @@ body {
     font-weight: 500;
 }
 
+.work-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.work-action {
+    text-decoration: none;
+}
+
 .status-pending {
     background: rgba(241, 196, 15, 0.2);
     color: #f1c40f;
@@ -2287,6 +2333,10 @@ body {
     color: rgba(255, 255, 255, 0.5);
     font-size: 0.8rem !important;
     margin-top: 4px;
+}
+
+.activity-item .card-link {
+    margin-left: auto;
 }
 
 

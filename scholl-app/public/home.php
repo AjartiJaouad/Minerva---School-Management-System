@@ -321,7 +321,7 @@
         <div class="hero-content">
             <h1>EduConnect<br>Platform</h1>
             <p>Une plateforme éducative moderne pour connecter enseignants et étudiants. Gérez vos classes, travaux, évaluations et communications en un seul endroit.</p>
-            <a href="#" class="cta-button">Commencer</a>
+            <a href="auth/login" class="cta-button">Commencer</a>
         </div>
         <div class="hero-visual">
             <div class="leaf leaf1"></div>

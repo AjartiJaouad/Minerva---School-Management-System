@@ -129,18 +129,18 @@ $teacherEmail = htmlspecialchars($_SESSION['email'] ?? 'enseignant@edu.com');
                 Actions rapides
             </h2>
             <div class="actions-grid">
-                <a class="action-btn action-primary" href="/works/create">
+                <button type="button" class="action-btn action-primary" onclick="window.location.href='/works/create'">
                     <span class="action-icon"><i class="fa-solid fa-pen-to-square"></i></span>
                     <span>Creer un devoir</span>
-                </a>
-                <a class="action-btn action-secondary" href="/students/create">
+                </button>
+                <button type="button" class="action-btn action-secondary" onclick="window.location.href='/students/create'">
                     <span class="action-icon"><i class="fa-solid fa-user-plus"></i></span>
                     <span>Ajouter un etudiant</span>
-                </a>
-                <a class="action-btn action-secondary" href="/classes">
+                </button>
+                <button type="button" class="action-btn action-secondary" onclick="window.location.href='/classes'">
                     <span class="action-icon"><i class="fa-solid fa-user-check"></i></span>
                     <span>Prendre presence</span>
-                </a>
+                </button>
                 <button class="action-btn action-secondary" type="button">
                     <span class="action-icon"><i class="fa-solid fa-chart-column"></i></span>
                     <span>Voir statistiques</span>
