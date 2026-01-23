@@ -1,14 +1,11 @@
 <?php
-// Enable error reporting for development
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Start session
 session_start();
 
-// Autoloader
+
 spl_autoload_register(function ($class) {
-    // Convert namespace to file path
     $class = str_replace('App\\', '', $class);
     $class = str_replace('\\', '/', $class);
     $file = __DIR__ . '/../app/' . $class . '.php';
@@ -20,7 +17,6 @@ spl_autoload_register(function ($class) {
 
 use App\Core\Router;
 
-// Create router instance
 $router = new Router();
 
 // Define routes
@@ -28,19 +24,15 @@ $router = new Router();
 $router->get('/', 'HomeController', 'index');
 $router->get('/home', 'HomeController', 'index');
 
-// Auth routes
-$router->get('/auth/login', 'AuthController', 'showLogin');
+$router->get('/auth/login', 'AuthController', 'showLogin'); 
 $router->post('/auth/login', 'AuthController', 'login');
 $router->post('/auth/register', 'AuthController', 'register');
-$router->get('/auth/logout', 'AuthController', 'logout');
+$router->get('/logout', 'AuthController', 'logout'); 
 
-// Student routes
-$router->get('/student/dashboard', 'StudentController', 'dashboard');
 
-// Teacher routes
-$router->get('/teacher/dashboard', 'TeacherController', 'dashboard');
+$router->get('/student/dashboard', 'AuthController', 'studentDashboard');
+$router->get('/teacher/dashboard', 'AuthController', 'teacherDashboard');
 
-// Class routes
 $router->get('/classes', 'ClassController', 'index');
 $router->get('/classes/create', 'ClassController', 'create');
 $router->post('/classes/store', 'ClassController', 'store');
@@ -80,6 +72,5 @@ $router->post('/chat/send', 'ChatController', 'send');
 $router->get('/students/create', 'StudentManagementController', 'create');
 $router->post('/students/store', 'StudentManagementController', 'store');
 
-// Dispatch the request
 $router->dispatch();
 ?>

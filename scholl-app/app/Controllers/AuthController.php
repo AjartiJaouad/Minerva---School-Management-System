@@ -1,32 +1,20 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\User;
 use App\Core\Auth;
-use App\Core\Database;
 
 class AuthController {
-    
-    private $db;
-    
-    public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
-    }
-    
-    // Show login page
+
+    // 1. Afficher le formulaire de connexion
     public function showLogin() {
-        Auth::start();
-        
-        // If already logged in, redirect to dashboard
-        if (Auth::isLoggedIn()) {
-            $role = Auth::getRole();
-            header("Location: /" . $role . "/dashboard");
-            exit;
+        if (isset($_SESSION['user_id'])) {
+            $this->redirectUser($_SESSION['role']);
         }
-        
-        require_once __DIR__ . '/../views/auth/login.php';
+        require_once dirname(__DIR__) . '/views/auth/login.php';
     }
-    
-    // Handle login
+
+    // 2. Traiter la connexion (Login)
     public function login() {
         Auth::start();
         
@@ -60,9 +48,17 @@ class AuthController {
             $stmt->execute(['email' => $email, 'role' => $role]);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
             
-            // Verify user exists and password is correct
+            // Nettoyage des données
+            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+            $password = $_POST['password'];
+
+            // Appel au Model
+            $userModel = new User();
+            $user = $userModel->findByEmail($email);
+
+            // Vérification
             if ($user && password_verify($password, $user['password'])) {
-                // Set session variables
+                // Création de la session
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['name'] = $user['name'];
@@ -80,21 +76,16 @@ class AuthController {
                 header("Location: /{$role}/dashboard");
                 exit;
                 
+                $this->redirectUser($user['role']);
             } else {
-                $_SESSION['error'] = 'Email ou mot de passe incorrect';
-                header('Location: /auth/login');
+                $_SESSION['error'] = "Email ou mot de passe incorrect.";
+                header('Location: /login');
                 exit;
             }
-            
-        } catch (\PDOException $e) {
-            error_log("Login error: " . $e->getMessage());
-            $_SESSION['error'] = 'Erreur de connexion. Veuillez réessayer.';
-            header('Location: /auth/login');
-            exit;
         }
     }
-    
-    // Handle registration
+
+    // 3. Traiter l'inscription (Register)
     public function register() {
         Auth::start();
         
@@ -142,13 +133,26 @@ class AuthController {
             $checkStmt = $this->db->prepare($checkSql);
             $checkStmt->execute(['email' => $email]);
             
-            if ($checkStmt->fetch()) {
-                $_SESSION['error'] = 'Cet email est déjà utilisé';
-                header('Location: /auth/login');
+            $name = trim($_POST['name']);
+            $email = trim($_POST['email']);
+            $password = $_POST['password'];
+            $confirmPassword = $_POST['confirm_password'];
+            $role = $_POST['role'];
+
+            if ($password !== $confirmPassword) {
+                $_SESSION['error'] = "Les mots de passe ne correspondent pas.";
+                header('Location: /login'); 
                 exit;
             }
-            
-            // Hash password
+
+            $userModel = new User();
+
+            if ($userModel->findByEmail($email)) {
+                $_SESSION['error'] = "Cet email est déjà utilisé.";
+                header('Location: /login');
+                exit;
+            }
+
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             
             // Insert new user
@@ -185,22 +189,37 @@ class AuthController {
             exit;
         }
     }
-    
-    // Handle logout
+
     public function logout() {
-        Auth::start();
-        
-        // Clear remember me cookie
-        if (isset($_COOKIE['remember_token'])) {
-            setcookie('remember_token', '', time() - 3600, '/');
-        }
-        
-        // Destroy session
         session_unset();
         session_destroy();
+        header('Location: /login');
+        exit;
+    }
+
+    // --- Dashboards ---
+
+    public function teacherDashboard() {
+       
+        $viewPath = dirname(__DIR__) . '/views/teatcher/dashboard.php';
         
-        // Redirect to home
-        header('Location: /');
+        if (file_exists($viewPath)) {
+            require_once $viewPath;
+        } else {
+            echo "Erreur : La vue dashboard.php n'existe pas dans views/teacher/";
+        }
+    }
+
+    public function studentDashboard() {
+        require_once dirname(__DIR__) . '/views/student/dashboard.php';
+    }
+
+    private function redirectUser($role) {
+        if ($role === 'enseignant' || $role === 'teacher') {
+            header('Location: /teacher/dashboard'); 
+        } else {
+            header('Location: /student/dashboard');
+        }
         exit;
     }
 }

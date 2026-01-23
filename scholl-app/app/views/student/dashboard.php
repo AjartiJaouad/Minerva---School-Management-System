@@ -211,7 +211,7 @@ $studentEmail = htmlspecialchars($_SESSION['email'] ?? 'etudiant@edu.com');
                         <div class="class-icon class-icon-1">2B</div>
                         <div class="class-info">
                             <h3>2nde B - Francais</h3>
-                            <p>Enseignant: M. Dupont • 25 etudiants</p>
+                            <p>Enseignant: M. Dupont ï¿½ 25 etudiants</p>
                         </div>
                         <button class="class-action-btn">?</button>
                     </div>
